@@ -27,6 +27,8 @@ public class AvaloniaTheme : ICloneable
 	{
 		ThemeColors = FluentVariants.ToDictionary(t => t, _ => new Dictionary<string, Color>());
 	}
+	public Color GetColor(string? themeVariant, string itemName)
+		=> GetColor(FromVariantName(themeVariant), itemName);
 
 	public Color GetColor(ThemeVariant themeVariant, string itemName)
 	{
@@ -34,30 +36,32 @@ public class AvaloniaTheme : ICloneable
 		return ThemeColors[themeVariant].TryGetValue(itemName, out var color) ? color : default;
 	}
 
-	public void SetColor(string? themeVariant, Expression<Func<ColorPaletteResources, Color>> colorSelector, Color color)
+	public AvaloniaTheme SetColor(string? themeVariant, Expression<Func<ColorPaletteResources, Color>> colorSelector, Color color)
 		=> SetColor(FromVariantName(themeVariant), colorSelector, color);
 
-	public void SetColor(ThemeVariant themeVariant, Expression<Func<ColorPaletteResources, Color>> colorSelector, Color color)
+	public AvaloniaTheme SetColor(ThemeVariant themeVariant, Expression<Func<ColorPaletteResources, Color>> colorSelector, Color color)
 	{
-		ValidateThemeVariant(themeVariant);
-
-		if (colorSelector.Body.NodeType is ExpressionType.MemberAccess &&
+		return
+			colorSelector.Body.NodeType is ExpressionType.MemberAccess &&
 			colorSelector.Body is MemberExpression memberExpression &&
 			memberExpression.Member is PropertyInfo colorProperty &&
-			colorProperty.DeclaringType == typeof(ColorPaletteResources))
-		{
-			SetColor(themeVariant, colorProperty.Name, color);
-		}
+			colorProperty.DeclaringType == typeof(ColorPaletteResources)
+			? SetColor(themeVariant, colorProperty.Name, color)
+			: this;
 	}
 
-	public void SetColor(string? themeVariant, string itemName, Color itemColor)
+	public AvaloniaTheme SetColor(string? themeVariant, string itemName, Color itemColor)
 		=> SetColor(FromVariantName(themeVariant), itemName, itemColor);
 
-	public void SetColor(ThemeVariant themeVariant, string itemName, Color itemColor)
+	public AvaloniaTheme SetColor(ThemeVariant themeVariant, string itemName, Color itemColor)
 	{
 		ValidateThemeVariant(themeVariant);
 		ThemeColors[themeVariant][itemName] = itemColor;
+		return this;
 	}
+
+	public FrozenDictionary<string, Color> GetThemeColors(string? themeVariant)
+		=> GetThemeColors(FromVariantName(themeVariant));
 
 	public FrozenDictionary<string, Color> GetThemeColors(ThemeVariant themeVariant)
 	{

@@ -17,12 +17,12 @@ namespace AvaloniaThemeColorChanger
             DefaultTheme = AvaloniaTheme.GetLiveTheme(this);
 
             //Clone the default theme so we can keep track of the defaults
-			var liveTheme = (AvaloniaTheme)DefaultTheme.Clone();
-
-            //Make runtime changes to the default theme and apply
-			liveTheme.SetColor(ActualThemeVariant, c => c.AltHigh, Colors.AliceBlue);
-			liveTheme.SetColor(ActualThemeVariant, c => c.RegionColor, Colors.AntiqueWhite);
-			liveTheme.ApplyTheme(this, ActualThemeVariant);
+			//Make runtime changes to the default theme and apply
+			((AvaloniaTheme)DefaultTheme.Clone())
+				.SetColor(ActualThemeVariant, c => c.Accent, Colors.DarkOrchid)
+                .SetColor(ActualThemeVariant, c => c.AltHigh, Colors.AliceBlue)
+			    .SetColor(ActualThemeVariant, c => c.RegionColor, Colors.AntiqueWhite)
+			    .ApplyTheme(this, ActualThemeVariant);
 		}
 
         public static AvaloniaTheme? DefaultTheme { get; private set; }
