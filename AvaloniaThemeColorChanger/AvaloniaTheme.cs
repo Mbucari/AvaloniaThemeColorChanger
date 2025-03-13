@@ -96,6 +96,8 @@ public class AvaloniaTheme : ICloneable
 
 	public void ApplyTheme(Application app, ThemeVariant themeVariant)
 	{
+		app.RequestedThemeVariant = themeVariant;
+		themeVariant = app.ActualThemeVariant;
 		ValidateThemeVariant(themeVariant);
 
 		bool fluentColorChanged = false;
@@ -128,8 +130,6 @@ public class AvaloniaTheme : ICloneable
 
 			app.Styles.Add(newFluent);
 		}
-
-		app.RequestedThemeVariant = themeVariant;
 	}
 
 	public object Clone()
